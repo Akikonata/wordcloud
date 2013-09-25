@@ -64,7 +64,7 @@ $.fn.WordCloud = function(config){
   })();
   map.direction = 0;//用0来标记左侧
 
-  for(var j = 0;j < config.max;j ++){
+  for(var j = 0;j < config.max;j++){
   	//将初始词放置在区域中心
   	if(j===0){
   		//计算纵横向的位移格子数
@@ -73,6 +73,7 @@ $.fn.WordCloud = function(config){
   		var _left = Math.round(map.width/2) - Math.ceil(__w/2);
   		var _top = Math.round(map.height/2) - Math.ceil(__h/2);
   		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+  		data[j].arranged = true;
   		//将已经填充的区域设置为1
   		for(_h=1;_h<=__w;_h++){
   			for(_v=1;_v<=__h;_v++){
@@ -86,11 +87,29 @@ $.fn.WordCloud = function(config){
   		var centerX = Math.round(map.width/2);
   		var centerY = Math.round(map.height/2);
   		switch(map.direction){
-  			case 0:  break;
-  			case 1: break;
-  			case 2: break;
-  			case 3: break;
-  			default: break;
+  			case 0: {
+  				for(var _h = centerX;_h>=0;_h--){
+  					for(var _v = 0;_v<centerY;_v++){
+  						//以中轴线为中心寻找附近最近的空白区域
+  						for(var b_h = _h - __w; b_h>=0; b_h--){
+  							
+  						}
+  					}
+  				}
+  				map.direction++;
+  			}
+  			if(data[j].arranged)break;
+  			case 1: {
+  				map.direction++;
+  			}
+  			if(data[j].arranged)break;
+  			case 2: {
+  				map.direction++;
+  			}
+  			if(data[j].arranged)break;
+  			case 3: {map.direction=0;} 
+  			if(data[j].arranged)break;
+  			default:break;
   		}
   		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
   	}
