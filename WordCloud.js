@@ -40,14 +40,15 @@ $.fn.WordCloud = function(config){
 		break_num += weight_count[i]*(i+1);
 	}
 	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/4);
+	var lattic_width = parseInt(char_weight) + 2;
 
-	var lattic_width = char_weight + 2;//为保险，在字体尺寸的基础上＋2来防止过小溢出
   //生成每个词的template
 
   //建立虚拟地图
   var map = {
   	width: Math.floor(width/lattic_width),//横向的格子数
   	height: Math.floor(height/lattic_width),//纵向的格子数
+  	lattic_width: lattic_width//为保险，在字体尺寸的基础上＋2来防止过小溢出
   }
   map.lattic_arrange = (function(){
   		console.log(map.height,map.width);
@@ -71,8 +72,10 @@ $.fn.WordCloud = function(config){
   	//将初始词放置在区域中心
   	if(j===0){
   		//计算横向的格子数
-  		var _left = Math.ceil(data[j].weight/2);
-  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
+  		var _left = map.width - Math.ceil(data[j].weight*data[j].word.length/2);
+  		var _top = map.height - Math.ceil(data[j].weight/2);
+  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left* map.lattic_width+"px;top:"+_left* map.lattic_width+"px'>"+data[j].word+"</div>";
+  		
   	} else {
   		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
   	}
