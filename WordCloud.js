@@ -86,13 +86,27 @@ $.fn.WordCloud = function(config){
   		var __h = data[j].weight;
   		var centerX = Math.round(map.width/2);
   		var centerY = Math.round(map.height/2);
+  		var endloop = false;
   		switch(map.direction){
   			case 0: {
   				for(var _h = centerX;_h>=0;_h--){
+  					if(endloop)break;
   					for(var _v = 0;_v<centerY;_v++){
-  						//以中轴线为中心寻找附近最近的空白区域
-  						for(var b_h = _h - __w; b_h>=0; b_h--){
-  							
+  						var a_l = true,a_r = true;
+   						//以中轴线为中心寻找附近最近的空白区域
+  						for(var b_h=0; b_h<__w; b_h++){
+  							for(var b_v=0; b_v<__h;b_v++){
+  								if(map.lattic_arrange[_v-b_h][centerY-_v]===1){a_l=false;}
+  								if(map.lattic_arrange[_v-b_h][centerY+_v]===1){a_r=false;}
+  								if(!(a_l&&a_r))break;
+  							}
+  						}
+  						if(a_l){
+  							var _left = centerX - _h - __w;
+  							var _top = centerY - _v - __h;
+  							endloop = true;
+  						} else if(a_r){
+  							endloop = true;  
   						}
   					}
   				}
