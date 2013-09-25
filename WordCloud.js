@@ -41,6 +41,7 @@ $.fn.WordCloud = function(config){
 	}
 	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/4);
 	var lattic_width = parseInt(char_weight) + 2;
+	console.log(lattic_width);
 
   //生成每个词的template
 
@@ -61,22 +62,36 @@ $.fn.WordCloud = function(config){
   		}
   		return arrange;
   })();
-  //初始化虚拟地图的中心区域
-  map.left = Math.floor(map.width/2);
-  map.right = parseInt(map.left) + 1;
-  map.top = Math.floor(map.height/2);
-  map.bottom = parseInt(map.top) + 1;
   map.direction = 0;//用0来标记左侧
 
   for(var j = 0;j < config.max;j ++){
   	//将初始词放置在区域中心
   	if(j===0){
-  		//计算横向的格子数
-  		var _left = map.width - Math.ceil(data[j].weight*data[j].word.length/2);
-  		var _top = map.height - Math.ceil(data[j].weight/2);
-  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left* map.lattic_width+"px;top:"+_left* map.lattic_width+"px'>"+data[j].word+"</div>";
-  		
+  		//计算纵横向的位移格子数
+  		var __w = data[j].weight*data[j].word.length;
+  		var __h = data[j].weight;
+  		var _left = Math.round(map.width/2) - Math.ceil(__w/2);
+  		var _top = Math.round(map.height/2) - Math.ceil(__h/2);
+  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+  		//将已经填充的区域设置为1
+  		for(_h=1;_h<=__w;_h++){
+  			for(_v=1;_v<=__h;_v++){
+  				map.lattic_arrange[_left+_h][_top+_v] = 1;
+  			}
+  		}
   	} else {
+  		//计算词占据矩形的高和宽
+  		var __w = data[j].weight * data[j].word.length;
+  		var __h = data[j].weight;
+  		var centerX = Math.round(map.width/2);
+  		var centerY = Math.round(map.height/2);
+  		switch(map.direction){
+  			case 0:  break;
+  			case 1: break;
+  			case 2: break;
+  			case 3: break;
+  			default: break;
+  		}
   		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
   	}
   }
