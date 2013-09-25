@@ -1,0 +1,28 @@
+body{
+	font-family: "黑体";
+}
+.wordcloud .wd{
+	position: absolute;
+	display: block;
+}
+.rotate {
+/* W3C CSS3 standard */
+    transform: translateX(-100%) rotate(-90deg);
+  	transform-origin: right top;
+    /* Firefox */
+    -moz-transform: translateX(-100%) rotate(-90deg);
+    -moz-transform-origin: right top;
+    /* webkit (Chrome, Safari, mobile browsers, etc) */
+     -webkit-transform: translateX(-100%) rotate(-90deg);
+     -webkit-transform-origin: right top;
+    /* Opera */
+    -o-transform: translateX(-100%) rotate(-90deg);
+    -o-transform-origin: right top;
+    /* IE>=9 */
+    -ms-transform: translateX(-100%) rotate(-90deg);
+    -ms-transform-origin: right top;
+    /* IE8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+    /* IE<8 */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
