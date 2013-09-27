@@ -31,7 +31,6 @@ $.fn.WordCloud = function(config){
 		count = 0;
 	}
 	weight_count = weight_count.reverse();
-	console.log(weight_count);
   
 	/*根据统计结果布局词云*/
 	//根据权重和统计计算面积分割
@@ -92,37 +91,43 @@ $.fn.WordCloud = function(config){
   				for(var _h = centerX;_h>=0;_h--){
   					if(endloop)break;
   					for(var _v = 0;_v<centerY;_v++){
+              if(endloop)break;
   						var a_l = true,a_r = true;
    						//以中轴线为中心寻找附近最近的空白区域
   						for(var b_h=0; b_h<__w; b_h++){
   							for(var b_v=0; b_v<__h;b_v++){
-  								if(map.lattic_arrange[_v-b_h][centerY-_v]===1){a_l=false;}
-  								if(map.lattic_arrange[_v-b_h][centerY+_v]===1){a_r=false;}
+  								if(map.lattic_arrange[_h-b_h][centerY-_v-b_v]===1){a_l=false;}
+  								if(map.lattic_arrange[_h-b_h][centerY+_v+b_v]===1){a_r=false;}
   								if(!(a_l&&a_r))break;
   							}
   						}
+              var _left,_top;
   						if(a_l){
-  							var _left = centerX - _h - __w;
-  							var _top = centerY - _v - __h;
+  							_left = centerX - _h - __w;
+  							_top = centerY - _v - __h;
   							endloop = true;
   						} else if(a_r){
+                _left = centerX - _h - __w;
+                _top = centerY + _v + __h;
   							endloop = true;  
   						}
+              data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+              console.log(data[j]._tpl);
   					}
   				}
   				map.direction++;
   			}
-  			if(data[j].arranged)break;
+  			break;
   			case 1: {
   				map.direction++;
   			}
-  			if(data[j].arranged)break;
+  			break;
   			case 2: {
   				map.direction++;
   			}
-  			if(data[j].arranged)break;
+  			break;
   			case 3: {map.direction=0;} 
-  			if(data[j].arranged)break;
+  			break;
   			default:break;
   		}
   		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
