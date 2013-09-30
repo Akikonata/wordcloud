@@ -85,6 +85,7 @@ $.fn.WordCloud = function(config){
   		var __h = data[j].weight;
   		var centerX = Math.round(map.width/2);
   		var centerY = Math.round(map.height/2);
+      
   		var endloop = false;
   		switch(map.direction){
   			case 0: {
@@ -100,19 +101,24 @@ $.fn.WordCloud = function(config){
   								if(map.lattic_arrange[_h-b_h][centerY+_v+b_v]===1){a_r=false;}
   								if(!(a_l&&a_r))break;
   							}
+                if(!(a_l&&a_r))break;
   						}
               var _left,_top;
   						if(a_l){
+                console.log(_h,_v);
   							_left = centerX - _h - __w;
   							_top = centerY - _v - __h;
+                data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+                console.log(data[j]._tpl);
   							endloop = true;
   						} else if(a_r){
+                console.log(_h,_v);
                 _left = centerX - _h - __w;
                 _top = centerY + _v + __h;
-  							endloop = true;  
+                data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+  							console.log(data[j]._tpl);
+                endloop = true;  
   						}
-              data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
-              console.log(data[j]._tpl);
   					}
   				}
   				map.direction++;
@@ -130,7 +136,6 @@ $.fn.WordCloud = function(config){
   			break;
   			default:break;
   		}
-  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
   	}
   }
 
