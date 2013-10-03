@@ -94,7 +94,7 @@ $.fn.WordCloud = function(config){
         var s_X = s_x,s_Y = s_y; 
         var result = false;
         var found = false;
-        if(Math.random()>0.95){
+        if(Math.random()>0.98){
           while(!found&&s_X>-1&&s_X<map.width){
             while(!found&&s_Y>(Math.abs(s_x-s_X)*s_y/s_x)&&s_Y<(map.height-Math.abs(s_x-s_X)*s_y/s_x)){
               found = test(s_X,s_Y);
@@ -136,7 +136,7 @@ $.fn.WordCloud = function(config){
   	if(j===0){
   		var _left = Math.round(map.width/2) - Math.ceil(__w/2);
   		var _top = Math.round(map.height/2) - Math.ceil(__h/2);
-  		data[j]._tpl = "<div class='wd"+(rotate?" rotate":"")+"' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+  		data[j]._tpl = "<div class='wd' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
   		//将已经填充的区域设置为1
   		for(var _h=0;_h<__w;_h++){
   			for(var _v=0;_v<__h;_v++){
