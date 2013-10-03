@@ -38,7 +38,7 @@ $.fn.WordCloud = function(config){
 		break_num += weight_count[i]*(i+1);
 	}
 	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/4);
-	var lattic_width = Math.ceil(char_weight);
+	var lattic_width = Math.round(char_weight);
 
   //生成每个词的template
 
@@ -58,7 +58,7 @@ $.fn.WordCloud = function(config){
   		}
   		return arrange;
   })();
-  map.direction = 0;//用0来标记左侧
+  map.direction = 0;
   var dir = function(d){
     switch(d){
       case 0: return {x:1,y:1};
@@ -69,8 +69,8 @@ $.fn.WordCloud = function(config){
     }
   }
   var rand_color = function(){
-    var random = function(){return Math.ceil(Math.random()*256)};
-    return "rgb("+random()+","+random()+","+random()+")";
+    var random = function(range){return Math.round(Math.random()*range)};
+    return "hsl("+random(360)+",60%,45%)";
   }
   //查找以s_x,s_y为起点的最近的空白区域
   var search_emp = function(map,s_x,s_y,_w,_h,dir){  
@@ -94,7 +94,7 @@ $.fn.WordCloud = function(config){
         var s_X = s_x,s_Y = s_y; 
         var result = false;
         var found = false;
-        if(Math.random()>0.95){
+        if(Math.random()>0.9){
           while(!found&&s_X>-1&&s_X<map.width){
             while(!found&&s_Y>(Math.abs(s_x-s_X)*s_y/s_x)&&s_Y<(map.height-Math.abs(s_x-s_X)*s_y/s_x)){
               found = test(s_X,s_Y);
@@ -122,7 +122,14 @@ $.fn.WordCloud = function(config){
 
   var j = 0;
   while(j < config.max){
-    var __w = data[j].weight*data[j].word.length;
+    var __w = (function(){
+      var w = 0;
+      var len = data[j].word.length;
+      for(var _s=0;_s<len;_s++){
+        (/[a-zA-Z]/).test(data[j].word[_s])?(w+=data[j].weight/2):(w+=data[j].weight);
+      }
+      return Math.round(w);
+    })();
     var __h = data[j].weight;
 
   	//将初始词放置在区域中心
@@ -151,7 +158,6 @@ $.fn.WordCloud = function(config){
       var pos_h,pos_v;
   		var s_Pos = search_emp(map,centerX,centerY,__w,__h,dir(map.direction));
       if(s_Pos){
-
         data[j]._tpl = "<div class='wd"+(rotate?" rotate":"")+"' style='"+(rotate?("width:"+(__tmp*char_weight+data[j].word.length)+"px;"):"")+"color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+s_Pos.x*map.lattic_width+"px;top:"+s_Pos.y* map.lattic_width+"px'>"+data[j].word+"</div>";
         //将已经填充的区域设置为1
         for(var _h=0;_h<__w;_h++){
