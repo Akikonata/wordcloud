@@ -94,7 +94,7 @@ $.fn.WordCloud = function(config){
         var s_X = s_x,s_Y = s_y; 
         var result = false;
         var found = false;
-        if(Math.random()>0.9){
+        if(Math.random()>0.95){
           while(!found&&s_X>-1&&s_X<map.width){
             while(!found&&s_Y>(Math.abs(s_x-s_X)*s_y/s_x)&&s_Y<(map.height-Math.abs(s_x-s_X)*s_y/s_x)){
               found = test(s_X,s_Y);
