@@ -146,6 +146,7 @@ $.fn.WordCloud = function(config){
       }
   		var centerX = Math.round(map.width/2);
   		var centerY = Math.round(map.height/2);
+      
   		var endloop = false;
       var pos_h,pos_v;
   		var s_Pos = search_emp(map,centerX,centerY,__w,__h,dir(map.direction));
