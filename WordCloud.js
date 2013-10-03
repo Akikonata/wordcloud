@@ -22,8 +22,7 @@ $.fn.WordCloud = function(config){
 		while(cur_tag<config.max && data[cur_tag][weight_key]>=weight_levels[i]){
 			data[cur_tag].weight = weight_levels.length - i;
 			data[cur_tag].weight ++;
-			data[cur_tag]._tpl = "<div style=''></div>"
-			data[cur_tag].arranged = false;
+			data[cur_tag]._tpl = "<div style=''></div>";
 			count += data[cur_tag].word.length;
 			cur_tag++;
 		}
@@ -31,7 +30,6 @@ $.fn.WordCloud = function(config){
 		count = 0;
 	}
 	weight_count = weight_count.reverse();
-	console.log(weight_count);
   
 	/*根据统计结果布局词云*/
 	//根据权重和统计计算面积分割
@@ -40,8 +38,7 @@ $.fn.WordCloud = function(config){
 		break_num += weight_count[i]*(i+1);
 	}
 	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/4);
-	var lattic_width = parseInt(char_weight) + 2;
-	console.log(lattic_width);
+	var lattic_width = Math.ceil(char_weight);
 
   //生成每个词的template
 
@@ -49,10 +46,9 @@ $.fn.WordCloud = function(config){
   var map = {
   	width: Math.floor(width/lattic_width),//横向的格子数
   	height: Math.floor(height/lattic_width),//纵向的格子数
-  	lattic_width: lattic_width//为保险，在字体尺寸的基础上＋2来防止过小溢出
+  	lattic_width: lattic_width
   }
-  map.lattic_arrange = (function(){
-  		console.log(map.height,map.width);
+  map.arrange = (function(){
   		var arrange = new Array();
   		for (var i = 0; i < map.width; i++){
   			arrange[i] = new Array();
@@ -63,70 +59,109 @@ $.fn.WordCloud = function(config){
   		return arrange;
   })();
   map.direction = 0;//用0来标记左侧
+  var dir = function(d){
+    switch(d){
+      case 0: return {x:1,y:1};
+      case 1: return {x:-1,y:1};
+      case 2: return {x:-1,y:-1};
+      case 3: return {x:1,y:-1};
+      default: return {x:1,y:1};
+    }
+  }
+  var rand_color = function(){
+    var random = function(){return Math.ceil(Math.random()*256)};
+    return "rgb("+random()+","+random()+","+random()+")";
+  }
+  //查找以s_x,s_y为起点的最近的空白区域
+  var search_emp = function(map,s_x,s_y,_w,_h,dir){  
+      //测试区域是否为空
+      var test = function(s_X,s_Y){
+        var empty = true;
+        for(var i=0;i<_w;i++){
+          for(var j=0;j<_h;j++){
+            try{
+              //console.log(s_x+dir.x*i,s_y+dir.y*j);
+              if(map.arrange[s_X+i][s_Y+j]!==0){empty=false;break;}
+            } catch (e){
+              empty=false;break;
+            }
+          }
+        }
+        return empty;
+      }
+      //排布的策略
+      var arrange_solution = function(){
+        var s_X = s_x,s_Y = s_y; 
+        var result = false;
+        var found = false;
+        if(Math.random()>0.95){
+          while(!found&&s_X>-1&&s_X<map.width){
+            while(!found&&s_Y>(Math.abs(s_x-s_X)*s_y/s_x)&&s_Y<(map.height-Math.abs(s_x-s_X)*s_y/s_x)){
+              found = test(s_X,s_Y);
+              if(found){result={x:s_X,y:s_Y}};
+              s_Y+=dir.y;
+            }
+            s_X+=dir.x;
+            s_Y = s_y;
+          }
+        } else {
+          while(!found&&s_Y>-1&&s_Y<map.height){
+            while(!found&&s_X>(Math.abs(s_y-s_Y)*s_x/s_y)&&s_X<(map.width-Math.abs(s_y-s_Y)*s_x/s_y)){
+              found = test(s_X,s_Y);
+              if(found){result={x:s_X,y:s_Y}};
+              s_X+=dir.x;
+            }
+            s_Y+=dir.y;
+            s_X = s_x;
+          }
+        }
+        return result;
+      }
+      return arrange_solution();
+    }
 
-  for(var j = 0;j < config.max;j++){
+  var j = 0;
+  while(j < config.max){
+    var __w = data[j].weight*data[j].word.length;
+    var __h = data[j].weight;
+
   	//将初始词放置在区域中心
   	if(j===0){
-  		//计算纵横向的位移格子数
-  		var __w = data[j].weight*data[j].word.length;
-  		var __h = data[j].weight;
   		var _left = Math.round(map.width/2) - Math.ceil(__w/2);
   		var _top = Math.round(map.height/2) - Math.ceil(__h/2);
-  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
-  		data[j].arranged = true;
+  		data[j]._tpl = "<div class='wd"+(rotate?" rotate":"")+"' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
   		//将已经填充的区域设置为1
-  		for(_h=1;_h<=__w;_h++){
-  			for(_v=1;_v<=__h;_v++){
-  				map.lattic_arrange[_left+_h][_top+_v] = 1;
+  		for(var _h=0;_h<__w;_h++){
+  			for(var _v=0;_v<__h;_v++){
+  				map.arrange[_left+_h-1][_top+_v-1] = 1;
   			}
   		}
+      j++;
   	} else {
-  		//计算词占据矩形的高和宽
-  		var __w = data[j].weight * data[j].word.length;
-  		var __h = data[j].weight;
+      var rotate = Math.random()>0.618?true:false;
+      var __tmp = __w;
+      if(rotate){
+        __w = __h;
+        __h = __tmp; 
+      }
   		var centerX = Math.round(map.width/2);
   		var centerY = Math.round(map.height/2);
   		var endloop = false;
-  		switch(map.direction){
-  			case 0: {
-  				for(var _h = centerX;_h>=0;_h--){
-  					if(endloop)break;
-  					for(var _v = 0;_v<centerY;_v++){
-  						var a_l = true,a_r = true;
-   						//以中轴线为中心寻找附近最近的空白区域
-  						for(var b_h=0; b_h<__w; b_h++){
-  							for(var b_v=0; b_v<__h;b_v++){
-  								if(map.lattic_arrange[_v-b_h][centerY-_v]===1){a_l=false;}
-  								if(map.lattic_arrange[_v-b_h][centerY+_v]===1){a_r=false;}
-  								if(!(a_l&&a_r))break;
-  							}
-  						}
-  						if(a_l){
-  							var _left = centerX - _h - __w;
-  							var _top = centerY - _v - __h;
-  							endloop = true;
-  						} else if(a_r){
-  							endloop = true;  
-  						}
-  					}
-  				}
-  				map.direction++;
-  			}
-  			if(data[j].arranged)break;
-  			case 1: {
-  				map.direction++;
-  			}
-  			if(data[j].arranged)break;
-  			case 2: {
-  				map.direction++;
-  			}
-  			if(data[j].arranged)break;
-  			case 3: {map.direction=0;} 
-  			if(data[j].arranged)break;
-  			default:break;
-  		}
-  		data[j]._tpl = "<div class='wd' style='font-size:"+data[j].weight*char_weight+"px'>"+data[j].word+"</div>";
+      var pos_h,pos_v;
+  		var s_Pos = search_emp(map,centerX,centerY,__w,__h,dir(map.direction));
+      if(s_Pos){
+
+        data[j]._tpl = "<div class='wd"+(rotate?" rotate":"")+"' style='"+(rotate?("width:"+(__tmp*char_weight+data[j].word.length)+"px;"):"")+"color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+s_Pos.x*map.lattic_width+"px;top:"+s_Pos.y* map.lattic_width+"px'>"+data[j].word+"</div>";
+        //将已经填充的区域设置为1
+        for(var _h=0;_h<__w;_h++){
+          for(var _v=0;_v<__h;_v++){
+            map.arrange[s_Pos.x+_h][s_Pos.y+_v] = 1;
+          }
+        }
+        j++;
+      }
   	}
+    map.direction = (++map.direction)%4;
   }
 
 	cur_tag = 0;

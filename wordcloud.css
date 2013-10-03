@@ -4,6 +4,7 @@ body{
 .wordcloud .wd{
 	position: absolute;
 	display: block;
+    cursor: pointer;
 }
 .rotate {
 /* W3C CSS3 standard */
