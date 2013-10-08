@@ -37,8 +37,9 @@ $.fn.WordCloud = function(config){
 	for(var i=0;i<weight_count.length;i++){
 		break_num += weight_count[i]*(i+1);
 	}
-	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/3.3);
-	var lattic_width = Math.round(char_weight);
+	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/4);
+	var lattic_width = Math.ceil(char_weight);
+  lattic_width++;
 
   //生成每个词的template
 
@@ -69,7 +70,8 @@ $.fn.WordCloud = function(config){
     }
   }
   var rand_color = function(){
-    var random = function(range){return Math.round(Math.random()*range)};
+    var random = function(range){return Math.ceil(Math.random()*range)};
+    console.log("hsl("+random(360)+",60%,45%)");
     return "hsl("+random(360)+",60%,45%)";
   }
   //查找以s_x,s_y为起点的最近的空白区域
@@ -126,12 +128,12 @@ $.fn.WordCloud = function(config){
 
   	//将初始词放置在区域中心
   	if(j===0){
-  		var _top = Math.round(map.height/2) - Math.ceil(__h/2);
+  		var _top = Math.ceil(map.height/2) - Math.ceil(__h/2);
   		data[j]._tpl = $("<div class='wd' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;top:"+_top* map.lattic_width+"px;display:none'>"+data[j].word+"</div>");
       $this.append(data[j]._tpl);
       var __w = Math.ceil(data[j]._tpl.width()/map.lattic_width);
       console.log(__w);
-      var _left = Math.round(map.width/2) - Math.ceil(__w/2);
+      var _left = Math.ceil(map.width/2) - Math.ceil(__w/2);
       data[j]._tpl.css({"left":_left*map.lattic_width+"px"});
   		//将已经填充的区域设置为1
   		for(var _h=0;_h<__w;_h++){
@@ -151,8 +153,8 @@ $.fn.WordCloud = function(config){
         __w = __h;
         __h = __tmp; 
       }
-  		var centerX = Math.round(map.width/2);
-  		var centerY = Math.round(map.height/2);
+  		var centerX = Math.ceil(map.width/2);
+  		var centerY = Math.ceil(map.height/2);
       
   		var endloop = false;
       var pos_h,pos_v;
