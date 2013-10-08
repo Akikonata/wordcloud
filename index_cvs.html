@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>wordcloud</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="wordcloud.css">
+	</head>
+	<body>
+		<div id="c-area" class="wordcloud" style="margin:0 auto; width:800px;height:600px; background:#CCC;position:relative"></div>
+	</body>
+	<script src="jQuery.js"></script>
+	<script src="WordCloud_cvs.js"></script>
+	<script>
+		$.getJSON(
+			"http://www.weibomaster.com/social_api/coke/custom/logics/words/",
+			{logic_id:"515bd7dc7c703f74f8000003",days:7},
+			function(data){
+				console.log(data);
+
+				// $("#c-area").WordCloud(
+				// 	{
+				// 		max:200,
+				// 		data:data,
+				// 		weight:{
+				// 			key:"num",
+				// 			levels:[30000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 0]
+				// 		}
+				// 	});
+			}
+		)
+	</script>
+</html>
