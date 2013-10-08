@@ -37,7 +37,7 @@ $.fn.WordCloud = function(config){
 	for(var i=0;i<weight_count.length;i++){
 		break_num += weight_count[i]*(i+1);
 	}
-	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/4);
+	var char_weight = Math.floor(Math.sqrt(width*height/break_num)/3.3);
 	var lattic_width = Math.round(char_weight);
 
   //生成每个词的template
@@ -122,21 +122,17 @@ $.fn.WordCloud = function(config){
 
   var j = 0;
   while(j < config.max){
-    var __w = (function(){
-      var w = 0;
-      var len = data[j].word.length;
-      for(var _s=0;_s<len;_s++){
-        (/[a-zA-Z]/).test(data[j].word[_s])?(w+=data[j].weight/2):(w+=data[j].weight);
-      }
-      return Math.round(w);
-    })();
     var __h = data[j].weight;
 
   	//将初始词放置在区域中心
   	if(j===0){
-  		var _left = Math.round(map.width/2) - Math.ceil(__w/2);
   		var _top = Math.round(map.height/2) - Math.ceil(__h/2);
-  		data[j]._tpl = "<div class='wd' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+_left*map.lattic_width+"px;top:"+_top* map.lattic_width+"px'>"+data[j].word+"</div>";
+  		data[j]._tpl = $("<div class='wd' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;top:"+_top* map.lattic_width+"px;display:none'>"+data[j].word+"</div>");
+      $this.append(data[j]._tpl);
+      var __w = Math.ceil(data[j]._tpl.width()/map.lattic_width);
+      console.log(__w);
+      var _left = Math.round(map.width/2) - Math.ceil(__w/2);
+      data[j]._tpl.css({"left":_left*map.lattic_width+"px"});
   		//将已经填充的区域设置为1
   		for(var _h=0;_h<__w;_h++){
   			for(var _v=0;_v<__h;_v++){
@@ -146,6 +142,10 @@ $.fn.WordCloud = function(config){
       j++;
   	} else {
       var rotate = Math.random()>0.618?true:false;
+      data[j]._tpl = $("<div class='wd"+(rotate?" rotate":"")+"' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px; display:none'>"+data[j].word+"</div>");
+      $this.append(data[j]._tpl);
+      var __w = Math.ceil(data[j]._tpl.width()/map.lattic_width);
+      if(rotate){data[j]._tpl.css({"width":(parseInt(__w*map.lattic_width)+data[j].word.length)+"px"})}
       var __tmp = __w;
       if(rotate){
         __w = __h;
@@ -158,7 +158,10 @@ $.fn.WordCloud = function(config){
       var pos_h,pos_v;
   		var s_Pos = search_emp(map,centerX,centerY,__w,__h,dir(map.direction));
       if(s_Pos){
-        data[j]._tpl = "<div class='wd"+(rotate?" rotate":"")+"' style='"+(rotate?("width:"+(__tmp*char_weight+data[j].word.length)+"px;"):"")+"color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;left:"+s_Pos.x*map.lattic_width+"px;top:"+s_Pos.y* map.lattic_width+"px'>"+data[j].word+"</div>";
+        data[j]._tpl.css({
+          "left":s_Pos.x*map.lattic_width+"px",
+          "top":s_Pos.y* map.lattic_width+"px"
+        });
         //将已经填充的区域设置为1
         for(var _h=0;_h<__w;_h++){
           for(var _v=0;_v<__h;_v++){
@@ -173,8 +176,8 @@ $.fn.WordCloud = function(config){
 
 	cur_tag = 0;
 	var _arrange = function(){
-		var $ele = $(data[cur_tag]._tpl); 
-		$this.append($ele.fadeIn(500));
+		var $ele = data[cur_tag]._tpl; 
+		$ele.fadeIn(500);
 		if(++cur_tag < data.length){setTimeout(arguments.callee,500)}
 	}
 	
