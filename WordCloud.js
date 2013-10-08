@@ -71,7 +71,6 @@ $.fn.WordCloud = function(config){
   }
   var rand_color = function(){
     var random = function(range){return Math.ceil(Math.random()*range)};
-    console.log("hsl("+random(360)+",60%,45%)");
     return "hsl("+random(360)+",60%,45%)";
   }
   //查找以s_x,s_y为起点的最近的空白区域
@@ -132,7 +131,6 @@ $.fn.WordCloud = function(config){
   		data[j]._tpl = $("<div class='wd' style='color:"+rand_color()+";font-size:"+data[j].weight*char_weight+"px;top:"+_top* map.lattic_width+"px;display:none'>"+data[j].word+"</div>");
       $this.append(data[j]._tpl);
       var __w = Math.ceil(data[j]._tpl.width()/map.lattic_width);
-      console.log(__w);
       var _left = Math.ceil(map.width/2) - Math.ceil(__w/2);
       data[j]._tpl.css({"left":_left*map.lattic_width+"px"});
   		//将已经填充的区域设置为1

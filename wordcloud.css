@@ -5,6 +5,7 @@ body{
 	position: absolute;
 	display: block;
     cursor: pointer;
+    text-align: right;
 }
 .rotate {
 /* W3C CSS3 standard */
